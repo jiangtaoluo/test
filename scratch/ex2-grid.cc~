@@ -1,0 +1,41 @@
+// ex2-grid.cc
+#include "ns3/core-module.h"
+#include "ns3/network-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/ndnSIM-module.h"
+
+namespace ns3 {
+
+int
+main(int argc, char* argv[])
+{
+  config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
+  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
+  Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
+
+  ComandLine cmd;
+  cmd.Parse(argc, argv);
+
+  // Creating 3x3 topology
+  PointToPointHelper p2p;
+  PointToPointGridHelper grid(3, 3, p2p);
+  grid.BoundingBox(100, 100, 200, 200);
+
+  // Install NDN stack on all nodes
+  ndn::StackHelper ndnHelper;
+  ndnHelper.InstallAll();
+
+  // Set BestRoute strategy
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
+
+  // Installing global routing interface on all nodes
+  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndnGlobalRoutingHelper.InstallAll();
+
+  
+
+  
+}
+
+
+}
